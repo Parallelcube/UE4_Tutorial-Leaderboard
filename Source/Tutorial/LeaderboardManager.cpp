@@ -21,7 +21,7 @@ ULeaderboardManager::ULeaderboardManager()
 {
 	//When the object is constructed, Get the HTTP module
 	Http = &FHttpModule::Get();
-	serverPHPpath = "http://yourHostingURL/Tutorial_LB/gameFunctions.php"; // replace with the gameFunctions URL
+	serverPHPpath = "http://yoursiteurl/Tutorial_LB/gameFunctions.php"; // replace with the gameFunctions URL
 }
 
 void ULeaderboardManager::OnResponseSendScore(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
@@ -158,7 +158,7 @@ void ULeaderboardManager::sendScore(const FString& userName, const int32& score)
 	data += "&userName=" + userName + "&score=" + FString::FromInt(score) + "&userData=" + FString(output1.c_str());
 
 
-	TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 	Request->OnProcessRequestComplete().BindUObject(this, &ULeaderboardManager::OnResponseSendScore);
 	//This is the url on which to process the request
 	Request->SetURL(serverPHPpath);
@@ -177,7 +177,7 @@ void ULeaderboardManager::getLeaderboard()
 	if (!userId.IsEmpty())
 		data += "&userId=" + userId;
 
-	TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 	Request->OnProcessRequestComplete().BindUObject(this, &ULeaderboardManager::OnResponseGetLeaderboard);
 	//This is the url on which to process the request
 	Request->SetURL(serverPHPpath);
